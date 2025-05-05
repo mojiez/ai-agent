@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: yi-ai-agent
+
+  ai:
+    dashscope:
+      api-key: "sk-bcdc97b8fd0e42fca36d3803936fad13"
