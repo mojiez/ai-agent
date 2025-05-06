@@ -1,5 +1,7 @@
 src/main/resources/application-local.yml
 
+chat-memory
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar

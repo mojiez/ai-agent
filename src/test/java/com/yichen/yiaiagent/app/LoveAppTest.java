@@ -1,10 +1,17 @@
 package com.yichen.yiaiagent.app;
 
+import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
+import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetriever;
+import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetrieverOptions;
+import com.yichen.yiaiagent.utils.TestApiKey;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.rag.Query;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,5 +54,34 @@ class LoveAppTest {
         String message = "你好，我是zkjj，我想策划一场浪漫约会但是不知道应该怎么做";
         LoveApp.LoveReport loveReport = loveApp.doChatWithReport(message, chatId);
         System.out.println(loveReport);
+    }
+
+    @Test
+    void testWithRag() {
+        String chatId = UUID.randomUUID().toString();
+
+        String message = "我现在单身，我想线上交友，应该注意什么";
+        String content = loveApp.doChatWithRag(message, chatId);
+        Assertions.assertNotNull(content);
+    }
+
+    @Test
+    void testRetriever() {
+        DashScopeApi dashScopeApi = new DashScopeApi(TestApiKey.API_KEY);
+        // 创建文档检索器
+        DashScopeDocumentRetriever retriever = new DashScopeDocumentRetriever(dashScopeApi, DashScopeDocumentRetrieverOptions.builder().withIndexName("恋爱大师").build());
+
+        // 测试从云知识库中查询
+        List<Document> documentList = retriever.retrieve(new Query("我是单身，我想线上交友，有什么建议"));
+        for (Document document : documentList) System.out.println(document);
+    }
+
+    @Test
+    void testRagCloud() {
+        String chatId = UUID.randomUUID().toString();
+
+        String message = "我现在单身，我想线上交友，应该注意什么";
+        String content = loveApp.doChatWithCloudRag(message, chatId);
+        Assertions.assertNotNull(content);
     }
 }

@@ -2,13 +2,18 @@ package com.yichen.yiaiagent.app;
 
 import com.yichen.yiaiagent.advisor.MyLoggerAdvisor;
 import com.yichen.yiaiagent.chatmemory.FileBasedChatMemory;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
+import org.springframework.ai.chat.client.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.chat.client.advisor.api.Advisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,11 +42,11 @@ public class LoveApp {
 
     public LoveApp(ChatModel dashscopeChatModel) {
         // 初始化基于内存的对话记忆
-//        ChatMemory chatMemory = new InMemoryChatMemory();
+        ChatMemory chatMemory = new InMemoryChatMemory();
 
-        // 自定义的文件持久化 多轮对话
-        String fileDir = System.getProperty("user.dir") + "/chat-memory";
-        ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
+//        // 自定义的文件持久化 多轮对话
+//        String fileDir = System.getProperty("user.dir") + "/chat-memory";
+//        ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
         chatClient = ChatClient.builder(dashscopeChatModel)
                 .defaultSystem(SYSTEM_PROMPT)
                 .defaultAdvisors(
@@ -76,5 +81,47 @@ public class LoveApp {
                 .call()
                 .entity(LoveReport.class);
         return loveReport;
+    }
+
+    /**
+     * 使用RAG进行问答
+     */
+    @Resource
+    private VectorStore vectorStore;
+    public String doChatWithRag(String message, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .system(SYSTEM_PROMPT)
+                .user(message)
+                .advisors(advisorSpec -> advisorSpec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId).param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+                .advisors(new QuestionAnswerAdvisor(vectorStore))
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content: {}", content);
+        return content;
+    }
+
+    /**
+     * 使用云知识库的RAG
+     */
+
+    // 根据名称注入
+    @Resource
+    Advisor loveAppRagCloudAdvisor;
+
+    public String doChatWithCloudRag(String message, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .system(SYSTEM_PROMPT)
+                .user(message)
+                .advisors(advisorSpec -> advisorSpec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId).param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+//                .advisors(new QuestionAnswerAdvisor(vectorStore))
+                .advisors(loveAppRagCloudAdvisor)
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content: {}", content);
+        return content;
     }
 }
