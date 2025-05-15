@@ -2,7 +2,17 @@ spring:
   application:
     name: yi-ai-agent
 
+  datasource:
+    url: jdbc:postgresql://rm-cn-em949h9q0000rt0o.rwlb.rds.aliyuncs.com/ai_agent
+
   ai:
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        dimensions: 1536
+        distance-type: COSINE_DISTANCE
+        max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+
     dashscope:
       chat:
         options:

@@ -8,10 +8,15 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.document.DocumentReader;
 import org.springframework.ai.rag.Query;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,5 +88,21 @@ class LoveAppTest {
         String message = "我现在单身，我想线上交友，应该注意什么";
         String content = loveApp.doChatWithCloudRag(message, chatId);
         Assertions.assertNotNull(content);
+    }
+
+    @Autowired
+    VectorStore vectorStore;
+
+    @Test
+    void testPGVector() {
+        List<Document> documents = List.of(
+                new Document("Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!! Spring AI rocks!!", Map.of("meta1", "meta1")),
+                new Document("The World is Big and Salvation Lurks Around the Corner"),
+                new Document("You walk forward facing the past and you turn back toward the future.", Map.of("meta2", "meta2")));
+// Add the documents to PGVector
+        vectorStore.add(documents);
+
+// Retrieve documents similar to a query
+        List<Document> results = this.vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
     }
 }
