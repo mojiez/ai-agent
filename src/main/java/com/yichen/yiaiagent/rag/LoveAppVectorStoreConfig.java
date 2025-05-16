@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author mojie
  * @date 2025/5/6 13:33
- * @description: 初始化向量数据库并保存文档
+ * @description: 初始化向量数据库并保存文档,这个是一个简单的向量数据库SimpleVectorStore，存储在内存中，可以使用json文件形式持久化保存
  */
 @Configuration
 public class LoveAppVectorStoreConfig {

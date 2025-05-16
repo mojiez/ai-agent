@@ -105,4 +105,23 @@ class LoveAppTest {
 // Retrieve documents similar to a query
         List<Document> results = this.vectorStore.similaritySearch(SearchRequest.builder().query("Spring").topK(5).build());
     }
+
+    @Test
+    void doChatWithRemotePgRag() {
+        String chatId = UUID.randomUUID().toString();
+
+        String message = "我想知道老王夫妇是怎么处理好夫妻关系的";
+        String content = loveApp.doChatWithRemotePgRag(message, chatId);
+        Assertions.assertNotNull(content);
+
+    }
+
+    @Test
+    void doChatWithRemotePgRagWithRetrieval() {
+        String chatId = UUID.randomUUID().toString();
+
+        String message = "我想知道老王夫妇是怎么处理好夫妻关系的";
+        String content = loveApp.doChatWithRemotePgRagWithRetrieval(message, chatId);
+        Assertions.assertNotNull(content);
+    }
 }

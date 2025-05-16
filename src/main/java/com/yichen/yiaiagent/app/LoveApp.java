@@ -85,6 +85,7 @@ public class LoveApp {
 
     /**
      * 使用RAG进行问答
+     * 本地的RAG知识库
      */
     @Resource
     private VectorStore vectorStore;
@@ -118,6 +119,53 @@ public class LoveApp {
                 .advisors(advisorSpec -> advisorSpec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId).param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
 //                .advisors(new QuestionAnswerAdvisor(vectorStore))
                 .advisors(loveAppRagCloudAdvisor)
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content: {}", content);
+        return content;
+    }
+
+    /**
+     * 使用远程云数据库 PgVector 进行RAG检索
+     * 使用QuestionAnswerAdvisor
+     */
+
+    @Resource
+    private VectorStore pgVectorVectorStore;
+
+    public String doChatWithRemotePgRag(String message, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .system(SYSTEM_PROMPT)
+                .user(message)
+                .advisors(advisorSpec -> advisorSpec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId).param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+//                .advisors(new QuestionAnswerAdvisor(vectorStore))
+//                .advisors(loveAppRagCloudAdvisor)
+                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content: {}", content);
+        return content;
+    }
+
+    /**
+     * 使用远程云数据库 PgVector 进行RAG检索
+     * 使用RetrievalAugmentationAdvisor
+     */
+    @Resource(name = "PgRetrievalAugmentationAdvisor")
+    private RetrievalAugmentationAdvisor pgRetrievalAugmentationAdvisor;
+    public String doChatWithRemotePgRagWithRetrieval(String message, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .system(SYSTEM_PROMPT)
+                .user(message)
+                .advisors(advisorSpec -> advisorSpec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId).param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+//                .advisors(new QuestionAnswerAdvisor(vectorStore))
+//                .advisors(loveAppRagCloudAdvisor)
+//                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+                .advisors(pgRetrievalAugmentationAdvisor)
                 .call()
                 .chatResponse();
         String content = chatResponse.getResult().getOutput().getText();

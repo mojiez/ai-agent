@@ -18,7 +18,7 @@ import static org.springframework.ai.vectorstore.pgvector.PgVectorStore.PgIndexT
 /**
  * @author mojie
  * @date 2025/5/15 21:02
- * @description: 自己构造PgVectorStore，不用starter自动注入
+ * @description: 自己构造PgVectorStore，不用starter自动注入, 远程的PgVectoreStore，比SimpleVectorSore使用性高
  */
 @Configuration
 public class PgVectorVectorStoreConfig {
