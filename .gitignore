@@ -1,6 +1,10 @@
 src/main/resources/application-local.yml
 
+# 本地记忆话对话文件保存路径
 chat-memory
+
+# tool调用 文件操作 文件保存的路径
+/Users/mojie/Desktop/JAVA/yi-ai-agent/tmp
 
 HELP.md
 target/

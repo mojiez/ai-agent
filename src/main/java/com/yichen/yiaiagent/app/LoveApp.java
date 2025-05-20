@@ -2,6 +2,7 @@ package com.yichen.yiaiagent.app;
 
 import com.yichen.yiaiagent.advisor.MyLoggerAdvisor;
 import com.yichen.yiaiagent.chatmemory.FileBasedChatMemory;
+import com.yichen.yiaiagent.tools.WeatherTools;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -13,6 +14,7 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.tool.ToolCallback;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
@@ -126,37 +128,54 @@ public class LoveApp {
         return content;
     }
 
-    /**
-     * 使用远程云数据库 PgVector 进行RAG检索
-     * 使用QuestionAnswerAdvisor
-     */
+//    /**
+//     * 使用远程云数据库 PgVector 进行RAG检索
+//     * 使用QuestionAnswerAdvisor
+//     */
+//
+//    @Resource
+//    private VectorStore pgVectorVectorStore;
+//
+//    public String doChatWithRemotePgRag(String message, String chatId) {
+//        ChatResponse chatResponse = chatClient
+//                .prompt()
+//                .system(SYSTEM_PROMPT)
+//                .user(message)
+//                .advisors(advisorSpec -> advisorSpec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId).param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+////                .advisors(new QuestionAnswerAdvisor(vectorStore))
+////                .advisors(loveAppRagCloudAdvisor)
+//                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+//                .call()
+//                .chatResponse();
+//        String content = chatResponse.getResult().getOutput().getText();
+//        log.info("content: {}", content);
+//        return content;
+//    }
+//
+//    /**
+//     * 使用远程云数据库 PgVector 进行RAG检索
+//     * 使用RetrievalAugmentationAdvisor
+//     */
+//    @Resource(name = "PgRetrievalAugmentationAdvisor")
+//    private RetrievalAugmentationAdvisor pgRetrievalAugmentationAdvisor;
+//    public String doChatWithRemotePgRagWithRetrieval(String message, String chatId) {
+//        ChatResponse chatResponse = chatClient
+//                .prompt()
+//                .system(SYSTEM_PROMPT)
+//                .user(message)
+//                .advisors(advisorSpec -> advisorSpec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId).param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+////                .advisors(new QuestionAnswerAdvisor(vectorStore))
+////                .advisors(loveAppRagCloudAdvisor)
+////                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+//                .advisors(pgRetrievalAugmentationAdvisor)
+//                .call()
+//                .chatResponse();
+//        String content = chatResponse.getResult().getOutput().getText();
+//        log.info("content: {}", content);
+//        return content;
+//    }
 
-    @Resource
-    private VectorStore pgVectorVectorStore;
-
-    public String doChatWithRemotePgRag(String message, String chatId) {
-        ChatResponse chatResponse = chatClient
-                .prompt()
-                .system(SYSTEM_PROMPT)
-                .user(message)
-                .advisors(advisorSpec -> advisorSpec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId).param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
-//                .advisors(new QuestionAnswerAdvisor(vectorStore))
-//                .advisors(loveAppRagCloudAdvisor)
-                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
-                .call()
-                .chatResponse();
-        String content = chatResponse.getResult().getOutput().getText();
-        log.info("content: {}", content);
-        return content;
-    }
-
-    /**
-     * 使用远程云数据库 PgVector 进行RAG检索
-     * 使用RetrievalAugmentationAdvisor
-     */
-    @Resource(name = "PgRetrievalAugmentationAdvisor")
-    private RetrievalAugmentationAdvisor pgRetrievalAugmentationAdvisor;
-    public String doChatWithRemotePgRagWithRetrieval(String message, String chatId) {
+    public String doChatWithTools(String message, String chatId, ToolCallback[] toolCallbacks) {
         ChatResponse chatResponse = chatClient
                 .prompt()
                 .system(SYSTEM_PROMPT)
@@ -165,7 +184,26 @@ public class LoveApp {
 //                .advisors(new QuestionAnswerAdvisor(vectorStore))
 //                .advisors(loveAppRagCloudAdvisor)
 //                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
-                .advisors(pgRetrievalAugmentationAdvisor)
+                .tools(toolCallbacks)
+                .call()
+                .chatResponse();
+        String content = chatResponse.getResult().getOutput().getText();
+        log.info("content: {}", content);
+        return content;
+    }
+
+    @Resource
+    private ToolCallback[] allTools;
+    public String doChatWithAllTools(String message, String chatId) {
+        ChatResponse chatResponse = chatClient
+                .prompt()
+                .system(SYSTEM_PROMPT)
+                .user(message)
+                .advisors(advisorSpec -> advisorSpec.param(CHAT_MEMORY_CONVERSATION_ID_KEY, chatId).param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 10))
+//                .advisors(new QuestionAnswerAdvisor(vectorStore))
+//                .advisors(loveAppRagCloudAdvisor)
+//                .advisors(new QuestionAnswerAdvisor(pgVectorVectorStore))
+                .tools(allTools)
                 .call()
                 .chatResponse();
         String content = chatResponse.getResult().getOutput().getText();

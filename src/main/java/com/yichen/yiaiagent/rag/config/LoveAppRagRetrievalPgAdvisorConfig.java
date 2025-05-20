@@ -28,54 +28,54 @@ import org.springframework.context.annotation.Configuration;
  * @date 2025/5/6 15:11
  * @description: 初始化基于云数据库PgVector的检索增强Advisor
  */
-@Configuration
-@Slf4j
-public class LoveAppRagRetrievalPgAdvisorConfig {
-    private QueryTransformer queryTransformer;
-
-    @Resource
-    private VectorStore pgVectorVectorStore;
-
-    @Bean
-    public RetrievalAugmentationAdvisor PgRetrievalAugmentationAdvisor(ChatModel dashscopeChatModel) {
-        // 检索前
-        ChatClient.Builder builder = ChatClient.builder(dashscopeChatModel);
-        // 1. 使用重写转换器
-        queryTransformer = RewriteQueryTransformer.builder()
-                .chatClientBuilder(builder)
-                .build();
-        // 2. 使用多查询扩展器
-        MultiQueryExpander queryExpander = MultiQueryExpander.builder()
-                .chatClientBuilder(builder)
-                .numberOfQueries(3)
-                .build();
-
-        // 检索中
-        // 1. 设置相似度阈值 topk 指定文档检索的数据库
-        Filter.Expression expression = new FilterExpressionBuilder()
-                .eq("status", "已婚")
-                .build();
-
-        DocumentRetriever documentRetriever = VectorStoreDocumentRetriever.builder()
-                .vectorStore(pgVectorVectorStore)
-                .similarityThreshold(0.5) //相似度阈值
-                .filterExpression(expression) // 2. 配置文档过滤规则， 只需要已婚的
-                .topK(5)
-                .build();
-        // 检索后
-        // 1. 空上下文检索
-        ContextualQueryAugmenter queryAugmenter = ContextualQueryAugmenter.builder()
-                .allowEmptyContext(false)
-                .build();
-
-        RetrievalAugmentationAdvisor retrievalAugmentationAdvisor = RetrievalAugmentationAdvisor.builder()
-                .queryTransformers(queryTransformer)
-                .queryExpander(queryExpander)
-                .documentRetriever(documentRetriever)
-                .queryAugmenter(queryAugmenter)
-                .build();
-
-        return retrievalAugmentationAdvisor;
-    }
-
-}
+//@Configuration
+//@Slf4j
+//public class LoveAppRagRetrievalPgAdvisorConfig {
+//    private QueryTransformer queryTransformer;
+//
+//    @Resource
+//    private VectorStore pgVectorVectorStore;
+//
+//    @Bean
+//    public RetrievalAugmentationAdvisor PgRetrievalAugmentationAdvisor(ChatModel dashscopeChatModel) {
+//        // 检索前
+//        ChatClient.Builder builder = ChatClient.builder(dashscopeChatModel);
+//        // 1. 使用重写转换器
+//        queryTransformer = RewriteQueryTransformer.builder()
+//                .chatClientBuilder(builder)
+//                .build();
+//        // 2. 使用多查询扩展器
+//        MultiQueryExpander queryExpander = MultiQueryExpander.builder()
+//                .chatClientBuilder(builder)
+//                .numberOfQueries(3)
+//                .build();
+//
+//        // 检索中
+//        // 1. 设置相似度阈值 topk 指定文档检索的数据库
+//        Filter.Expression expression = new FilterExpressionBuilder()
+//                .eq("status", "已婚")
+//                .build();
+//
+//        DocumentRetriever documentRetriever = VectorStoreDocumentRetriever.builder()
+//                .vectorStore(pgVectorVectorStore)
+//                .similarityThreshold(0.5) //相似度阈值
+//                .filterExpression(expression) // 2. 配置文档过滤规则， 只需要已婚的
+//                .topK(5)
+//                .build();
+//        // 检索后
+//        // 1. 空上下文检索
+//        ContextualQueryAugmenter queryAugmenter = ContextualQueryAugmenter.builder()
+//                .allowEmptyContext(false)
+//                .build();
+//
+//        RetrievalAugmentationAdvisor retrievalAugmentationAdvisor = RetrievalAugmentationAdvisor.builder()
+//                .queryTransformers(queryTransformer)
+//                .queryExpander(queryExpander)
+//                .documentRetriever(documentRetriever)
+//                .queryAugmenter(queryAugmenter)
+//                .build();
+//
+//        return retrievalAugmentationAdvisor;
+//    }
+//
+//}
