@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "yi-image-search-mcp-server": {
+      "command": "/Users/mojie/Library/Java/JavaVirtualMachines/ms-21.0.7/Contents/Home/bin/java",
+      "args": [
+        "-Dspring.ai.mcp.server.stdio=true",
+        "-Dspring.main.web-application-type=none",
+        "-jar",
+        "/Users/mojie/Desktop/JAVA/yi-ai-agent/yi-image-search-mcp-server/target/yi-image-search-mcp-server-0.0.1-SNAPSHOT.jar"
+      ],
+      "env": {}
+    },
+    "amap-maps": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@amap/amap-maps-mcp-server"
+      ],
+      "env": {
+        "AMAP_MAPS_API_KEY": "1d9b72f59d102820faa1c83d537d1896"
+      }
+    }
+  }
+}

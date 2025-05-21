@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: yi-image-search-mcp-server
+  profiles:
+    active: stdio
+server:
+  port: 8184
+
+logging:
+  level:
+    root: OFF
