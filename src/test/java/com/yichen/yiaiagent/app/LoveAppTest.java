@@ -3,6 +3,7 @@ package com.yichen.yiaiagent.app;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi;
 import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetriever;
 import com.alibaba.cloud.ai.dashscope.rag.DashScopeDocumentRetrieverOptions;
+import com.yichen.yiaiagent.YiAiAgentApplication;
 import com.yichen.yiaiagent.utils.TestApiKey;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
@@ -149,6 +150,14 @@ class LoveAppTest {
     private void testMessage(String message) {
         String chatId = UUID.randomUUID().toString();
         String answer = loveApp.doChatWithAllTools(message, chatId);
+        Assertions.assertNotNull(answer);
+    }
+
+    @Test
+    void testMcpTools() {
+        String message = "帮我搜一些哄女朋友开心的图片";
+        String chatId = UUID.randomUUID().toString();
+        String answer = loveApp.doChatWithMcpTools(message, chatId);
         Assertions.assertNotNull(answer);
     }
 }

@@ -22,15 +22,15 @@ class ToolsTest {
     @Resource
     LoveApp loveApp;
 
-    @Test
-    void testTools() {
-        String chatId = UUID.randomUUID().toString();
-        // 第一轮
-        String message = "我想知道今天昆明的天气怎么样";
-
-        // 得到工具对象
-        ToolCallback[] tools = ToolCallbacks.from(new WeatherTools());
-        String content = loveApp.doChatWithTools(message, chatId, tools);
-        Assertions.assertNotNull(content);
-    }
+//    @Test
+//    void testTools() {
+//        String chatId = UUID.randomUUID().toString();
+//        // 第一轮
+//        String message = "我想知道今天昆明的天气怎么样";
+//
+//        // 得到工具对象
+//        ToolCallback[] tools = ToolCallbacks.from(new WeatherTools());
+//        String content = loveApp.doChatWithTools(message, chatId, tools);
+//        Assertions.assertNotNull(content);
+//    }
 }

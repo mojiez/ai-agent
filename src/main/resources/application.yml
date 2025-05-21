@@ -12,6 +12,16 @@ spring:
         dimensions: 1536
         distance-type: COSINE_DISTANCE
         max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+#    指定mcp配置文件
+    mcp:
+      client:
+#        request-timeout: 600000
+        stdio:
+          servers-configuration: classpath:mcp-servers-config.json
+#        sse:
+#          connections:
+#            server1:
+#              url: http://localhost:8184
 
     dashscope:
       chat:
