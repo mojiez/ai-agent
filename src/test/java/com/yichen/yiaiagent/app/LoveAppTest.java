@@ -37,7 +37,7 @@ class LoveAppTest {
         String chatId = UUID.randomUUID().toString();
 
         // 第一轮
-        String message = "你好，我是zkjj";
+        String message = "你好，我是zkjj";//akaZhangBro
         String answer = loveApp.doChat(message, chatId);
         Assertions.assertNotNull(answer);
 
