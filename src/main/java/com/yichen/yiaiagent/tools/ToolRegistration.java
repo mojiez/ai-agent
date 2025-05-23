@@ -25,6 +25,7 @@ public class ToolRegistration {
         WeatherTools weatherTools = new WeatherTools();
         WebScrapingTool webScrapingTool = new WebScrapingTool();
         WebSearchTool webSearchTool = new WebSearchTool(searchApiKey);
+        TerminateTool terminateTool = new TerminateTool();
         ToolCallback[] tools = ToolCallbacks.from(
                 fileOperationTool,
                 pdfGenerationTool,
@@ -32,7 +33,8 @@ public class ToolRegistration {
                 terminalOperationTool,
                 weatherTools,
                 webScrapingTool,
-                webSearchTool
+                webSearchTool,
+                terminateTool
         );
         return tools;
     }
