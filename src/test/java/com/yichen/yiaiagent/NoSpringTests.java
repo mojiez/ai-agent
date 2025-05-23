@@ -10,6 +10,6 @@ import org.junit.jupiter.api.Test;
 public class NoSpringTests {
     @Test
     public void test() {
-        System.out.println(System.getProperty("user.dir") + "/tmp");
+        System.out.println(System.getProperty("user.dir") + "/tmp");//akaWangSister
     }
 }
